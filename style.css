@@ -241,7 +241,7 @@ h6 {
 }
 
 #list-add-btn {
-  position: absolute;
+  position: fixed;
   bottom: 1em;
   right: calc(10% + 1em);
 
