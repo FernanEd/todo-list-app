@@ -154,33 +154,25 @@ h6 {
   color: var(--light);
 }
 
-#project-form {
+#project-header {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 1em;
 }
 
-#project-name-input {
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--light);
-  color: var(--light);
-  outline: 0;
-  font-family: 'Roboto', sans-serif;
-  font-size: 16px;
-
-  flex: 1;
+#project-return-btn {
+  align-self: flex-start;
+  display: none;
 }
 
-#project-name-input::placeholder {
-  color: var(--light);
-  opacity: 0.8;
+#project-nav {
 }
 
 #project-wrapper {
   display: flex;
   flex-direction: column;
   gap: 2em;
+  padding-bottom: 2em;
 }
 
 .project-item {
@@ -203,7 +195,7 @@ h6 {
 
 .project-item-controls {
   display: flex;
-  gap: 0.5em;
+  gap: 0.3em;
 }
 
 .project-item-header {
@@ -296,10 +288,10 @@ h6 {
   border-left: 2px solid var(--primary);
 }
 
-.list-item-controllers {
+.list-item-controls {
   display: flex;
   align-items: center;
-  gap: 0.5em;
+  gap: 0.3em;
 }
 
 .text-success {
@@ -376,6 +368,23 @@ h6 {
   color: var(--dark);
 }
 
+#project-add-btn {
+  padding: 1em;
+
+  background: var(--light);
+  color: var(--primary);
+
+  border: 0;
+  border-radius: 2em;
+
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.4);
+  transition: filter 0.3s ease;
+}
+
+#project-add-btn:hover {
+  filter: brightness(0.8);
+}
+
 #list-add-btn {
   position: fixed;
   bottom: 1em;
@@ -412,20 +421,27 @@ h6 {
 }
 
 #project-mini {
+  display: none;
+}
+
+#project-mini-header {
   background-color: var(--primary);
   color: var(--light);
 
-  display: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1em;
 
   padding: 0em 1em;
 }
 
-#project-mini > div {
+#project-mini-title {
   overflow: hidden;
   flex: 1;
 }
 
-#project-mini button {
+#project-mini-menu-btn {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -435,7 +451,7 @@ h6 {
   height: 3em;
 }
 
-#project-mini button > svg {
+#project-mini-menu-btn > svg {
   width: 100%;
   height: 100%;
 }
@@ -549,15 +565,15 @@ h6 {
   }
 
   #project-mini {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 1em;
+    display: initial;
   }
 
   #project-main {
     display: none;
+  }
+
+  #project-return-btn {
+    display: block;
   }
 
   #list-header {

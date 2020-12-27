@@ -10,52 +10,66 @@
     <div id="background">
       <div id="content">
         <div id="project-mini">
-          <div>
-            <h2>Current Project</h2>
-          </div>
-          <button class="btn btn-light">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-list"
-              viewBox="0 0 16 16"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
-              />
-            </svg>
-          </button>
-        </div>
-        <div id="project-main">
-          <form action="" id="project-form">
-            <input
-              type="text"
-              name=""
-              id="project-name-input"
-              placeholder="Enter new project"
-            />
-            <button id="project-submit-input" class="btn btn-light">
+          <div id="project-mini-header">
+            <div>
+              <h2>Current Project</h2>
+            </div>
+            <button id="project-mini-menu-btn" class="btn btn-light">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
                 fill="currentColor"
-                class="bi bi-folder-plus"
+                class="bi bi-list"
                 viewBox="0 0 16 16"
               >
                 <path
-                  d="M.5 3l.04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.684.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"
-                />
-                <path
-                  d="M13.5 10a.5.5 0 0 1 .5.5V12h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V13h-1.5a.5.5 0 0 1 0-1H13v-1.5a.5.5 0 0 1 .5-.5z"
+                  fill-rule="evenodd"
+                  d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
                 />
               </svg>
-              Add
             </button>
-          </form>
+          </div>
+        </div>
+
+        <div id="project-main">
+          <header id="project-header">
+            <div id="project-add-btn" class="btn btn-light">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-plus"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                />
+              </svg>
+              Add new project
+            </div>
+
+            <div id="project-return-btn" class="btn btn-light">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-arrow-counterclockwise"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"
+                />
+                <path
+                  d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"
+                />
+              </svg>
+              Go back
+            </div>
+          </header>
 
           <nav id="project-nav">
             <h2>Projects</h2>
@@ -83,13 +97,13 @@
             <h2>Tasks</h2>
             <nav class="link-nav">
               Show:
-              <a class="link-nav-item" href="">All tasks</a>
+              <a class="link-nav-item" href="#">All tasks</a>
               |
-              <a class="link-nav-item" href="">Close due date</a>
+              <a class="link-nav-item" href="#">Close due date</a>
               |
-              <a class="link-nav-item" href="">Top priority</a>
+              <a class="link-nav-item" href="#">Top priority</a>
               |
-              <a class="link-nav-item" href="">Done tasks</a>
+              <a class="link-nav-item" href="#">Done tasks</a>
             </nav>
           </header>
 
