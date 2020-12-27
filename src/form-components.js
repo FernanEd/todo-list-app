@@ -37,6 +37,7 @@ function factoryFormElement(title, ...fields) {
     }
 
     fieldInput.setAttribute('name', field.name);
+    fieldInput.setAttribute('id', field.id);
 
     if (field.required) fieldInput.setAttribute('required', '');
 
@@ -60,6 +61,9 @@ function factoryFormElement(title, ...fields) {
   return newForm;
 }
 
+let currentFunction;
+let currentCloseBtn;
+
 function launchForm(formElement, submitHandler) {
   let bg = document.createElement('div');
   bg.classList.add('modal-bg');
@@ -68,13 +72,20 @@ function launchForm(formElement, submitHandler) {
   let content = document.querySelector('#content');
   content.append(bg);
 
-  formElement.addEventListener('submit', (e) => {
-    e.preventDefault();
-    submitHandler();
-  });
-
   let closeBtn = formElement.querySelector('.form-close');
+
+  currentFunction = submitHandler;
+  currentCloseBtn = closeBtn;
+
   closeBtn.addEventListener('click', closeForm);
+  formElement.addEventListener('submit', submitForm);
+}
+
+function submitForm(e) {
+  e.preventDefault();
+  currentFunction(this);
+  currentCloseBtn.click();
+  this.removeEventListener('submit', submitForm);
 }
 
 function closeForm() {

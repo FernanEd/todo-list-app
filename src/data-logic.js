@@ -43,11 +43,14 @@ const USER_MODULE = (() => {
 
   const addProject = (project) => {
     USER_DATA.push(project);
+    //Update
     updateData();
   };
 
   const removeProject = (project) => {
     USER_DATA.splice(indexOf(project), 1);
+    //Update
+    updateData();
   };
 
   const getProjects = () => {
@@ -71,13 +74,32 @@ function factoryProject(name) {
 
   const addTask = (task) => {
     tasks.push(task);
+    //Update
+    //USER_MODULE.updateData();
+  };
+
+  const removeTask = (task) => {
+    tasks.splice(tasks.indexOf(task), 1);
+    //Update
+    //USER_MODULE.updateData();
+  };
+
+  const removeTaskAtIndex = (index) => {
+    tasks.splice(index, 1);
   };
 
   const getTasks = () => {
     return tasks;
   };
 
-  return { getObjLiteral, getName, addTask, getTasks };
+  return {
+    getObjLiteral,
+    getName,
+    addTask,
+    removeTask,
+    removeTaskAtIndex,
+    getTasks,
+  };
 }
 
 function factoryTask(desc, priority, duedate, done = false) {
