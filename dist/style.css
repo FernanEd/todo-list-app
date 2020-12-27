@@ -253,6 +253,11 @@ h6 {
   text-align: center;
 }
 
+.list-nav-item-selected {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
 #list-wrapper {
   display: flex;
   flex-direction: column;

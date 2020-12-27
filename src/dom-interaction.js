@@ -111,6 +111,10 @@ const DOM_DISPLAY = (() => {
   // For mobiles
   _mobileProjectTitle.innerText = getCurrentProject().getName();
 
+  const setFilter = (filter) => {
+    currentFilter = filter;
+  };
+
   function getCurrentProject() {
     return currentProject || new Project(' No project ');
   }
@@ -171,7 +175,23 @@ const DOM_DISPLAY = (() => {
       _tasksWrapper.innerText = 'No tasks to show.';
     }
 
-    tasks.forEach((task) => {
+    let filteredTasks = tasks;
+
+    //Apply filter
+    switch (currentFilter) {
+      case 1:
+        break;
+      case 2:
+        filteredTasks = [...tasks].sort((a, b) =>
+          a.getObjLiteral().priority > b.getObjLiteral().priority ? 1 : -1
+        );
+        break;
+      case 3:
+        filteredTasks = tasks.filter((task) => task.isDone());
+        break;
+    }
+
+    filteredTasks.forEach((task) => {
       let taskItem = factoryTaskElement(task.getObjLiteral());
       _tasksWrapper.appendChild(taskItem);
     });
@@ -406,7 +426,13 @@ const DOM_DISPLAY = (() => {
     });
   };
 
-  return { getCurrentProject, displayProjects, selectProject, updateDisplay };
+  return {
+    getCurrentProject,
+    displayProjects,
+    selectProject,
+    updateDisplay,
+    setFilter,
+  };
 })();
 
 // ADD PROJECT BTN
@@ -453,13 +479,23 @@ const DOM_DISPLAY = (() => {
 (() => {
   const TABS = document.querySelectorAll('.link-nav-item');
 
-  TABS.forEach((tabs) => {
-    tabs.addEventListener('click', (e) => {
-      console.log(tabs.innerText);
-      console.log([...TABS].indexOf(tabs));
+  TABS.forEach((tab) => {
+    tab.addEventListener('click', (e) => {
+      DOM_DISPLAY.setFilter([...TABS].indexOf(tab));
+      DOM_DISPLAY.updateDisplay();
+
+      deselectTabs(TABS);
+      selectTab(tab);
     });
   });
-  return;
+
+  function selectTab(tab) {
+    tab.classList.add('list-nav-item-selected');
+  }
+
+  function deselectTabs(tabs) {
+    tabs.forEach((tab) => tab.classList.remove('list-nav-item-selected'));
+  }
 })();
 
 export { DOM_DISPLAY };
