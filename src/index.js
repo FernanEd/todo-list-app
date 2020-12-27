@@ -6,8 +6,7 @@ import {
   USER_MODULE as USER,
 } from './data-logic.js';
 
-DOM.displayProjects();
-DOM.selectProject(2);
+DOM.updateDisplay();
 
 //Make the menu work for Mobiles
 
@@ -58,3 +57,8 @@ USER.addProject(project3);
 
 console.log(USER.getProjects());
 */
+
+document.addEventListener('click', (e) => {
+  console.log(USER.getProjects());
+  console.log(DOM.getCurrentProject().getObjLiteral());
+});

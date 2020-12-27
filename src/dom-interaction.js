@@ -21,8 +21,23 @@ const FORMS = {
     ],
     button: 'Create project',
   },
-  editProjectForm: {},
-  deleteProjectForm: {},
+  editProjectForm: {
+    title: 'Edit Project',
+    fields: [
+      {
+        id: 'name',
+        name: 'Project name',
+        type: 'text',
+        required: true,
+      },
+    ],
+    button: 'Update project',
+  },
+  deleteProjectForm: {
+    title: 'Are you sure you want to delete this project?',
+    fields: [],
+    button: 'Remove project',
+  },
   addTaskForm: {
     title: 'Add new Task',
     fields: [
@@ -88,11 +103,16 @@ const DOM_DISPLAY = (() => {
   const _projectWrapper = document.querySelector('#project-wrapper');
   const _tasksWrapper = document.querySelector('#list-wrapper');
 
-  let currentProject = USER.getProjects()[0];
+  let currentProject = undefined;
 
-  const getCurrentProject = () => {
-    return currentProject;
-  };
+  const _mobileProjectTitle = document.querySelector('#project-mini-title');
+
+  // For mobiles
+  _mobileProjectTitle.innerText = getCurrentProject().getName();
+
+  function getCurrentProject() {
+    return currentProject || new Project(' No project ');
+  }
 
   const displayProjects = () => {
     //Wipe anything before the function call
@@ -106,16 +126,40 @@ const DOM_DISPLAY = (() => {
 
     projects.forEach((project) => {
       let projectItem = factoryProjectElement(project.getObjLiteral());
+
+      let projectIndex = projects.indexOf(project);
+      let currentProjectIndex = USER.getProjects().indexOf(getCurrentProject());
+
+      //If this is the current project-item, select it
+      if (projectIndex === currentProjectIndex) {
+        projectItem.classList.add('project-item-selected');
+      }
+
       _projectWrapper.appendChild(projectItem);
     });
   };
 
   const selectProject = (index) => {
-    let project = Array.from(_projectWrapper.childNodes)[index];
-    project.classList.add('project-item-selected');
+    updateDisplay();
 
-    currentProject = USER.getProjects()[index];
-    displayTasks(currentProject.getTasks());
+    let project = Array.from(_projectWrapper.childNodes)[index];
+
+    //If project doesn't exist. don't even bother (should return error thoe)
+    if (!project) {
+      currentProject = undefined;
+    } else {
+      currentProject = USER.getProjects()[index];
+    }
+
+    //Update mobile title
+    _mobileProjectTitle.innerText = getCurrentProject().getName();
+
+    updateDisplay();
+  };
+
+  const updateDisplay = () => {
+    displayProjects();
+    displayTasks(getCurrentProject().getTasks());
   };
 
   const displayTasks = (tasks) => {
@@ -189,7 +233,7 @@ const DOM_DISPLAY = (() => {
     // ADD EVENT LISTENERS TO BUTTONS
 
     content.addEventListener('click', (e) => {
-      displayProject(projectElement);
+      displaySelectedProject(projectElement);
     });
 
     editBtn.addEventListener('click', (e) => {
@@ -203,16 +247,38 @@ const DOM_DISPLAY = (() => {
     return projectElement;
   }
 
-  const displayProject = (projectElement) => {
-    console.log('yes');
+  const displaySelectedProject = (projectElement) => {
+    let projectArr = [..._projectWrapper.children];
+    let projectIndex = projectArr.indexOf(projectElement);
+    selectProject(projectIndex);
   };
 
   const editProject = (projectElement) => {
-    console.log('maybe');
+    launchForm(FORMS.editProjectForm, (formElement) => {
+      //Locate index of which project i'm editing
+      let projectArr = [..._projectWrapper.children];
+      let projectIndex = projectArr.indexOf(projectElement);
+
+      //With that index, get the actual project obj and edit it
+      let project = USER.getProjects()[projectIndex];
+      project.editProject(formElement.querySelector('#name').value);
+
+      //Update display
+      USER.updateData();
+      DOM_DISPLAY.selectProject(projectIndex);
+    });
   };
 
   const deleteProject = (projectElement) => {
-    console.log('no');
+    launchForm(FORMS.deleteProjectForm, (formElement) => {
+      //Get relative index to it's position in the list
+      let projectArr = [..._projectWrapper.children];
+      let projectIndex = projectArr.indexOf(projectElement);
+      USER.removeProjectAtIndex(projectIndex);
+
+      USER.updateData();
+      DOM_DISPLAY.selectProject(-1);
+    });
   };
 
   function factoryTaskElement({ desc, priority, duedate, done }) {
@@ -305,7 +371,6 @@ const DOM_DISPLAY = (() => {
   const editTask = (taskElement) => {
     launchForm(FORMS.editTaskForm, (formElement) => {
       let project = DOM_DISPLAY.getCurrentProject();
-      let projectIndex = USER.getProjects().indexOf(project);
 
       let taskArr = [..._tasksWrapper.children];
       let taskIndex = taskArr.indexOf(taskElement);
@@ -320,16 +385,15 @@ const DOM_DISPLAY = (() => {
 
       //Update display
       USER.updateData();
-      DOM_DISPLAY.displayProjects();
-      DOM_DISPLAY.selectProject(projectIndex);
+      DOM_DISPLAY.updateDisplay();
     });
   };
 
   const deleteTask = (taskElement) => {
     launchForm(FORMS.deleteTaskForm, (formElement) => {
       let project = DOM_DISPLAY.getCurrentProject();
-      let projectIndex = USER.getProjects().indexOf(project);
 
+      //Get relative index to it's position in the list
       let taskArr = [..._tasksWrapper.children];
       let taskIndex = taskArr.indexOf(taskElement);
 
@@ -337,12 +401,11 @@ const DOM_DISPLAY = (() => {
 
       //Update display
       USER.updateData();
-      DOM_DISPLAY.displayProjects();
-      DOM_DISPLAY.selectProject(projectIndex);
+      DOM_DISPLAY.updateDisplay();
     });
   };
 
-  return { getCurrentProject, displayProjects, selectProject };
+  return { getCurrentProject, displayProjects, selectProject, updateDisplay };
 })();
 
 // ADD PROJECT BTN
@@ -351,19 +414,6 @@ const DOM_DISPLAY = (() => {
 
   addProjectBtn.addEventListener('click', (e) => {
     launchForm(FORMS.addProjectForm, (formElement) => {
-      /*
-      let newTask = new Task(
-        formElement.querySelector('#desc').value,
-        formElement.querySelector('#priority').value,
-        formElement.querySelector('#date').value
-      );
-
-      let project = DOM_DISPLAY.getCurrentProject();
-      let projectIndex = USER.getProjects().indexOf(project);
-
-      project.addTask(newTask);
-*/
-
       let newProject = new Project(formElement.querySelector('#name').value);
       USER.addProject(newProject);
 
@@ -372,7 +422,6 @@ const DOM_DISPLAY = (() => {
 
       //Update display
       USER.updateData();
-      DOM_DISPLAY.displayProjects();
       DOM_DISPLAY.selectProject(projectIndex);
     });
   });
@@ -391,20 +440,15 @@ const DOM_DISPLAY = (() => {
       );
 
       let project = DOM_DISPLAY.getCurrentProject();
-      let projectIndex = USER.getProjects().indexOf(project);
-
       project.addTask(newTask);
 
-      //Update display
       USER.updateData();
-      DOM_DISPLAY.displayProjects();
-      DOM_DISPLAY.selectProject(projectIndex);
+      DOM_DISPLAY.updateDisplay();
     });
   });
 })();
 
 // DISPLAY TABS
-
 (() => {
   const TABS = document.querySelectorAll('.link-nav-item');
 
