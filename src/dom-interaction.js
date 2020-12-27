@@ -9,31 +9,79 @@ import {
 import { factoryFormElement as Form, launchForm } from './form-components.js';
 
 const FORMS = {
-  addForm: new Form(
-    'Add new Task',
-    {
-      id: 'desc',
-      name: 'Description',
-      type: 'textarea',
-      required: true,
-    },
-    {
-      id: 'date',
-      name: 'Due date',
-      type: 'date',
-      required: true,
-    },
-    {
-      id: 'priority',
-      name: 'Priority (0 low - 3 max)',
-      type: 'number',
-      required: true,
-      minrange: 0,
-      maxrange: 3,
-    }
-  ),
+  addProjectForm: {
+    title: 'New Project',
+    fields: [
+      {
+        id: 'name',
+        name: 'Project name',
+        type: 'text',
+        required: true,
+      },
+    ],
+    button: 'Create project',
+  },
+  editProjectForm: {},
+  deleteProjectForm: {},
+  addTaskForm: {
+    title: 'Add new Task',
+    fields: [
+      {
+        id: 'desc',
+        name: 'Description',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'date',
+        name: 'Due date',
+        type: 'date',
+        required: true,
+      },
+      {
+        id: 'priority',
+        name: 'Priority (0 low - 3 max)',
+        type: 'number',
+        required: true,
+        minrange: 0,
+        maxrange: 3,
+      },
+    ],
+    button: 'Submit',
+  },
 
-  deleteForm: new Form('Delete this task?'),
+  editTaskForm: {
+    title: 'Edit Task',
+    fields: [
+      {
+        id: 'desc',
+        name: 'Description',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'date',
+        name: 'Due date',
+        type: 'date',
+        required: true,
+      },
+      {
+        id: 'priority',
+        name: 'Priority (0 low - 3 max)',
+        type: 'number',
+        required: true,
+        minrange: 0,
+        maxrange: 3,
+      },
+    ],
+    button: 'Update',
+  },
+
+  deleteTaskForm: {
+    title: 'Delete this task?',
+    fields: [],
+    button: 'Remove',
+  },
 };
 
 const DOM_DISPLAY = (() => {
@@ -83,95 +131,6 @@ const DOM_DISPLAY = (() => {
       _tasksWrapper.appendChild(taskItem);
     });
   };
-
-  function factoryTaskElement({ desc, priority, duedate, done }) {
-    let taskElement = document.createElement('div');
-    taskElement.classList.add('list-item');
-
-    // HEADER
-    let headerElement = document.createElement('div');
-    headerElement.classList.add('list-item-header');
-
-    let infoElement = document.createElement('div');
-    infoElement.classList.add('list-item-info');
-
-    let duedateElement = document.createElement('p');
-    duedateElement.classList.add('list-item-duedate', 'text-secondary');
-    duedateElement.innerText = duedate;
-
-    let priorityElement = document.createElement('p');
-    priorityElement.classList.add('list-item-priority', 'text-primary');
-    priorityElement.innerText =
-      priority == 3
-        ? 'Urgent'
-        : priority == 2
-        ? 'Important'
-        : priority == 1
-        ? 'Should Do'
-        : 'Optional';
-
-    infoElement.append(duedateElement);
-    infoElement.append(priorityElement);
-
-    let controllersElement = document.createElement('div');
-    controllersElement.classList.add('list-item-controllers');
-
-    let doneBtn = document.createElement('button');
-    doneBtn.classList.add('btn-done', 'btn', 'btn-primary', 'btn-circle');
-    doneBtn.innerHTML = ICON.ribbonCheckmark;
-
-    let editBtn = document.createElement('button');
-    editBtn.classList.add('btn-edit', 'btn', 'btn-secondary', 'btn-circle');
-    editBtn.innerHTML = ICON.pencil;
-
-    let deleteBtn = document.createElement('button');
-    deleteBtn.classList.add('btn-delete', 'btn', 'btn-secondary', 'btn-circle');
-    deleteBtn.innerHTML = ICON.trashcan;
-
-    controllersElement.append(doneBtn);
-    controllersElement.append(editBtn);
-    controllersElement.append(deleteBtn);
-
-    headerElement.append(infoElement);
-    headerElement.append(controllersElement);
-
-    // BODY
-    let bodyElement = document.createElement('div');
-    bodyElement.classList.add('list-item-body');
-
-    let descElement = document.createElement('p');
-    descElement.classList.add('list-item-desc');
-    descElement.innerText = desc;
-
-    bodyElement.append(descElement);
-
-    taskElement.append(headerElement);
-    taskElement.append(bodyElement);
-
-    doneBtn.addEventListener(
-      'click',
-      (e) => {
-        markAsDone(taskElement);
-      },
-      { once: true }
-    );
-    editBtn.addEventListener(
-      'click',
-      (e) => {
-        editTask(taskElement);
-      },
-      { once: true }
-    );
-    deleteBtn.addEventListener(
-      'click',
-      (e) => {
-        deleteTask(taskElement);
-      },
-      { once: true }
-    );
-
-    return taskElement;
-  }
 
   function factoryProjectElement({ name, tasks }) {
     let projectElement = document.createElement('div');
@@ -227,7 +186,116 @@ const DOM_DISPLAY = (() => {
     projectElement.append(content);
     projectElement.append(controls);
 
+    // ADD EVENT LISTENERS TO BUTTONS
+
+    content.addEventListener('click', (e) => {
+      displayProject(projectElement);
+    });
+
+    editBtn.addEventListener('click', (e) => {
+      editProject(projectElement);
+    });
+
+    deleteBtn.addEventListener('click', (e) => {
+      deleteProject(projectElement);
+    });
+
     return projectElement;
+  }
+
+  const displayProject = (projectElement) => {
+    console.log('yes');
+  };
+
+  const editProject = (projectElement) => {
+    console.log('maybe');
+  };
+
+  const deleteProject = (projectElement) => {
+    console.log('no');
+  };
+
+  function factoryTaskElement({ desc, priority, duedate, done }) {
+    let taskElement = document.createElement('div');
+    taskElement.classList.add('list-item');
+
+    // HEADER
+    let headerElement = document.createElement('div');
+    headerElement.classList.add('list-item-header');
+
+    let infoElement = document.createElement('div');
+    infoElement.classList.add('list-item-info');
+
+    let duedateElement = document.createElement('p');
+    duedateElement.classList.add('list-item-duedate', 'text-secondary');
+    duedateElement.innerText = duedate;
+
+    let priorityElement = document.createElement('p');
+    priorityElement.classList.add('list-item-priority', 'text-primary');
+    priorityElement.innerText =
+      priority == 3
+        ? 'Urgent'
+        : priority == 2
+        ? 'Important'
+        : priority == 1
+        ? 'Should Do'
+        : 'Optional';
+
+    infoElement.append(duedateElement);
+    infoElement.append(priorityElement);
+
+    let controlsElement = document.createElement('div');
+    controlsElement.classList.add('list-item-controls');
+
+    let doneBtn = document.createElement('button');
+    doneBtn.classList.add('btn-done', 'btn', 'btn-primary', 'btn-circle');
+    doneBtn.innerHTML = ICON.ribbonCheckmark;
+
+    let editBtn = document.createElement('button');
+    editBtn.classList.add('btn-edit', 'btn', 'btn-secondary', 'btn-circle');
+    editBtn.innerHTML = ICON.pencil;
+
+    let deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('btn-delete', 'btn', 'btn-secondary', 'btn-circle');
+    deleteBtn.innerHTML = ICON.trashcan;
+
+    controlsElement.append(doneBtn);
+    controlsElement.append(editBtn);
+    controlsElement.append(deleteBtn);
+
+    headerElement.append(infoElement);
+    headerElement.append(controlsElement);
+
+    // BODY
+    let bodyElement = document.createElement('div');
+    bodyElement.classList.add('list-item-body');
+
+    let descElement = document.createElement('p');
+    descElement.classList.add('list-item-desc');
+    descElement.innerText = desc;
+
+    bodyElement.append(descElement);
+
+    taskElement.append(headerElement);
+    taskElement.append(bodyElement);
+
+    // ADD EVENT LISTENERS TO BUTTONS
+
+    doneBtn.addEventListener(
+      'click',
+      (e) => {
+        markAsDone(taskElement);
+      },
+      { once: true }
+    );
+    editBtn.addEventListener('click', (e) => {
+      editTask(taskElement);
+    });
+    deleteBtn.addEventListener('click', (e) => {
+      deleteTask(taskElement);
+    });
+
+    return taskElement;
   }
 
   const markAsDone = (taskElement) => {
@@ -235,11 +303,30 @@ const DOM_DISPLAY = (() => {
   };
 
   const editTask = (taskElement) => {
-    console.log('edited');
+    launchForm(FORMS.editTaskForm, (formElement) => {
+      let project = DOM_DISPLAY.getCurrentProject();
+      let projectIndex = USER.getProjects().indexOf(project);
+
+      let taskArr = [..._tasksWrapper.children];
+      let taskIndex = taskArr.indexOf(taskElement);
+
+      let currentTask = project.getTasks()[taskIndex];
+
+      currentTask.editTask(
+        formElement.querySelector('#desc').value,
+        formElement.querySelector('#priority').value,
+        formElement.querySelector('#date').value
+      );
+
+      //Update display
+      USER.updateData();
+      DOM_DISPLAY.displayProjects();
+      DOM_DISPLAY.selectProject(projectIndex);
+    });
   };
 
   const deleteTask = (taskElement) => {
-    launchForm(FORMS.deleteForm, (formElement) => {
+    launchForm(FORMS.deleteTaskForm, (formElement) => {
       let project = DOM_DISPLAY.getCurrentProject();
       let projectIndex = USER.getProjects().indexOf(project);
 
@@ -258,11 +345,45 @@ const DOM_DISPLAY = (() => {
   return { getCurrentProject, displayProjects, selectProject };
 })();
 
+// ADD PROJECT BTN
+(() => {
+  let addProjectBtn = document.querySelector('#project-add-btn');
+
+  addProjectBtn.addEventListener('click', (e) => {
+    launchForm(FORMS.addProjectForm, (formElement) => {
+      /*
+      let newTask = new Task(
+        formElement.querySelector('#desc').value,
+        formElement.querySelector('#priority').value,
+        formElement.querySelector('#date').value
+      );
+
+      let project = DOM_DISPLAY.getCurrentProject();
+      let projectIndex = USER.getProjects().indexOf(project);
+
+      project.addTask(newTask);
+*/
+
+      let newProject = new Project(formElement.querySelector('#name').value);
+      USER.addProject(newProject);
+
+      //Get index of new project
+      let projectIndex = USER.getProjects().indexOf(newProject);
+
+      //Update display
+      USER.updateData();
+      DOM_DISPLAY.displayProjects();
+      DOM_DISPLAY.selectProject(projectIndex);
+    });
+  });
+})();
+
+// ADD TASK BTN
 (() => {
   let addTaskBtn = document.querySelector('#list-add-btn');
 
   addTaskBtn.addEventListener('click', (e) => {
-    launchForm(FORMS.addForm, (formElement) => {
+    launchForm(FORMS.addTaskForm, (formElement) => {
       let newTask = new Task(
         formElement.querySelector('#desc').value,
         formElement.querySelector('#priority').value,
@@ -280,6 +401,20 @@ const DOM_DISPLAY = (() => {
       DOM_DISPLAY.selectProject(projectIndex);
     });
   });
+})();
+
+// DISPLAY TABS
+
+(() => {
+  const TABS = document.querySelectorAll('.link-nav-item');
+
+  TABS.forEach((tabs) => {
+    tabs.addEventListener('click', (e) => {
+      console.log(tabs.innerText);
+      console.log([...TABS].indexOf(tabs));
+    });
+  });
+  return;
 })();
 
 export { DOM_DISPLAY };

@@ -1,6 +1,6 @@
 import { ICON } from './icons.js';
 
-function factoryFormElement(title, ...fields) {
+function factoryFormElement({ title, fields, button }) {
   let newForm = document.createElement('form');
   newForm.classList.add('modal-form');
 
@@ -54,14 +54,15 @@ function factoryFormElement(title, ...fields) {
 
   let formSubmit = document.createElement('button');
   formSubmit.classList.add('form-submit', 'btn', 'btn-primary', 'btn-long');
-  formSubmit.innerText = 'Submit';
+  formSubmit.innerText = button;
 
   newForm.append(formSubmit);
 
   return newForm;
 }
 
-function launchForm(formElement, submitHandler) {
+function launchForm(formObj, submitHandler) {
+  let formElement = new factoryFormElement(formObj);
   let bg = document.createElement('div');
   bg.classList.add('modal-bg');
   bg.append(formElement);

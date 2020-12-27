@@ -65,7 +65,10 @@ function factoryProject(name) {
   let tasks = [];
 
   const getObjLiteral = () => {
-    return { name, tasks: tasks.map((task) => task.getObjLiteral()) };
+    return {
+      name: projectName,
+      tasks: tasks.map((task) => task.getObjLiteral()),
+    };
   };
 
   const getName = () => {
@@ -109,7 +112,12 @@ function factoryTask(desc, priority, duedate, done = false) {
   let taskIsDone = done;
 
   const getObjLiteral = () => {
-    return { desc, priority, duedate, done };
+    return {
+      desc: taskDesc,
+      priority: taskPriority,
+      duedate: taskDueDate,
+      done: taskIsDone,
+    };
   };
 
   const isDone = () => {

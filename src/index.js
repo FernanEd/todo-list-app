@@ -1,46 +1,37 @@
+import { DOM_DISPLAY as DOM } from './dom-interaction.js';
+
 import {
   factoryTask as Task,
   factoryProject as Project,
   USER_MODULE as USER,
 } from './data-logic.js';
 
-import { factoryFormElement as Form, launchForm } from './form-components.js';
-
-import { DOM_DISPLAY as DOM } from './dom-interaction.js';
-
 DOM.displayProjects();
 DOM.selectProject(2);
 
-// FORMS AND DATA HANDLING
+//Make the menu work for Mobiles
 
 (() => {
-  /*
-  let tasksElements = document.querySelectorAll('.list-item');
+  let menuBtn = document.querySelector('#project-mini-menu-btn');
+  let returnBtn = document.querySelector('#project-return-btn ');
 
-  tasksElements.forEach((taskElem) => {
-    const taskIndex = [...tasksElements].indexOf(taskElem);
+  let projectMini = document.querySelector('#project-mini');
+  let projectSection = document.querySelector('#project-main');
+  let listSection = document.querySelector('#list-main');
 
-    let editBtn = taskElem.querySelector('.btn-edit');
-    let deleteBtn = taskElem.querySelector('.btn-delete');
+  menuBtn.addEventListener('click', (e) => {
+    projectMini.style.display = 'none';
+    listSection.style.display = 'none';
 
-    editBtn.addEventListener('click', (e) => {
-      console.log('cheers');
-    });
-
-    deleteBtn.addEventListener('click', (e) => {
-      launchForm(deleteForm, (formElement) => {
-        let project = DOM.getCurrentProject();
-        project.removeTaskAtIndex(taskIndex);
-
-        let index = USER.getProjects().indexOf(project);
-
-        USER.updateData();
-        DOM.displayProjects();
-        DOM.selectProject(index);
-      });
-    });
+    projectSection.style.display = 'initial';
   });
-  */
+
+  returnBtn.addEventListener('click', (e) => {
+    projectMini.style.display = 'initial';
+    listSection.style.display = 'initial';
+
+    projectSection.style.display = 'none';
+  });
 })();
 
 /*
@@ -54,15 +45,16 @@ project1.addTask(task2);
 project1.addTask(task3);
 project1.addTask(task4);
 USER.addProject(project1);
-*/
-/*
+
 let project2 = new Project('second');
-let task2 = new Task('maybe', 'no', 'tomorrow', true);
-project2.addTask(task2);
+let newtask2 = new Task('maybe', 'no', 'tomorrow', true);
+project2.addTask(newtask2);
 USER.addProject(project2);
 
 let project3 = new Project('third');
-let task3 = new Task('also', 'yes', 'today');
-project3.addTask(task3);
+let newtask3 = new Task('also', 'yes', 'today');
+project3.addTask(newtask3);
 USER.addProject(project3);
+
+console.log(USER.getProjects());
 */
