@@ -104,8 +104,9 @@ const DOM_DISPLAY = (() => {
   const _tasksWrapper = document.querySelector('#list-wrapper');
 
   let currentProject = undefined;
-
   const _mobileProjectTitle = document.querySelector('#project-mini-title');
+
+  let currentFilter = 0; // 0 - All | 1 - Close due dates | 2 - Top Priority |  3 - Done
 
   // For mobiles
   _mobileProjectTitle.innerText = getCurrentProject().getName();

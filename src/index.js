@@ -58,7 +58,9 @@ USER.addProject(project3);
 console.log(USER.getProjects());
 */
 
+/*
 document.addEventListener('click', (e) => {
   console.log(USER.getProjects());
   console.log(DOM.getCurrentProject().getObjLiteral());
 });
+*/
