@@ -61,9 +61,6 @@ function factoryFormElement(title, ...fields) {
   return newForm;
 }
 
-let currentFunction;
-let currentCloseBtn;
-
 function launchForm(formElement, submitHandler) {
   let bg = document.createElement('div');
   bg.classList.add('modal-bg');
@@ -74,27 +71,24 @@ function launchForm(formElement, submitHandler) {
 
   let closeBtn = formElement.querySelector('.form-close');
 
-  currentFunction = submitHandler;
-  currentCloseBtn = closeBtn;
+  closeBtn.addEventListener(
+    'click',
+    (e) => {
+      formElement.reset();
+      content.removeChild(bg);
+    },
+    { once: true }
+  );
 
-  closeBtn.addEventListener('click', closeForm);
-  formElement.addEventListener('submit', submitForm);
-}
-
-function submitForm(e) {
-  e.preventDefault();
-  currentFunction(this);
-  currentCloseBtn.click();
-  this.removeEventListener('submit', submitForm);
-}
-
-function closeForm() {
-  this.removeEventListener('click', closeForm);
-
-  let form = this.parentNode.parentElement;
-  form.reset();
-  let content = document.querySelector('#content');
-  content.removeChild(content.lastChild);
+  formElement.addEventListener(
+    'submit',
+    (e) => {
+      e.preventDefault();
+      submitHandler(formElement);
+      closeBtn.click();
+    },
+    { once: true }
+  );
 }
 
 export { factoryFormElement, launchForm };

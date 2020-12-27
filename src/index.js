@@ -11,60 +11,10 @@ import { DOM_DISPLAY as DOM } from './dom-interaction.js';
 DOM.displayProjects();
 DOM.selectProject(2);
 
-console.log(DOM.getCurrentProject());
-
 // FORMS AND DATA HANDLING
 
-const addForm = new Form(
-  'Add new Task',
-  {
-    id: 'desc',
-    name: 'Description',
-    type: 'textarea',
-    required: true,
-  },
-  {
-    id: 'date',
-    name: 'Due date',
-    type: 'date',
-    required: true,
-  },
-  {
-    id: 'priority',
-    name: 'Priority (0 low - 3 max)',
-    type: 'number',
-    required: true,
-    minrange: 0,
-    maxrange: 3,
-  }
-);
-
 (() => {
-  let addTaskBtn = document.querySelector('#list-add-btn');
-
-  addTaskBtn.addEventListener('click', (e) => {
-    launchForm(addForm, (formElement) => {
-      let newTask = new Task(
-        formElement.querySelector('#desc').value,
-        formElement.querySelector('#priority').value,
-        formElement.querySelector('#date').value
-      );
-
-      let project = DOM.getCurrentProject();
-      project.addTask(newTask);
-
-      let index = USER.getProjects().indexOf(project);
-
-      USER.updateData();
-      DOM.displayProjects();
-      DOM.selectProject(index);
-    });
-  });
-})();
-
-const deleteForm = new Form('Delete this task?');
-
-(() => {
+  /*
   let tasksElements = document.querySelectorAll('.list-item');
 
   tasksElements.forEach((taskElem) => {
@@ -90,6 +40,7 @@ const deleteForm = new Form('Delete this task?');
       });
     });
   });
+  */
 })();
 
 /*

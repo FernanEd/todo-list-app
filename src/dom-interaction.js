@@ -1,6 +1,40 @@
 import { ICON } from './icons.js';
 
-import { USER_MODULE as USER } from './data-logic.js';
+import {
+  factoryTask as Task,
+  factoryProject as Project,
+  USER_MODULE as USER,
+} from './data-logic.js';
+
+import { factoryFormElement as Form, launchForm } from './form-components.js';
+
+const FORMS = {
+  addForm: new Form(
+    'Add new Task',
+    {
+      id: 'desc',
+      name: 'Description',
+      type: 'textarea',
+      required: true,
+    },
+    {
+      id: 'date',
+      name: 'Due date',
+      type: 'date',
+      required: true,
+    },
+    {
+      id: 'priority',
+      name: 'Priority (0 low - 3 max)',
+      type: 'number',
+      required: true,
+      minrange: 0,
+      maxrange: 3,
+    }
+  ),
+
+  deleteForm: new Form('Delete this task?'),
+};
 
 const DOM_DISPLAY = (() => {
   const _projectWrapper = document.querySelector('#project-wrapper');
@@ -114,6 +148,28 @@ const DOM_DISPLAY = (() => {
     taskElement.append(headerElement);
     taskElement.append(bodyElement);
 
+    doneBtn.addEventListener(
+      'click',
+      (e) => {
+        markAsDone(taskElement);
+      },
+      { once: true }
+    );
+    editBtn.addEventListener(
+      'click',
+      (e) => {
+        editTask(taskElement);
+      },
+      { once: true }
+    );
+    deleteBtn.addEventListener(
+      'click',
+      (e) => {
+        deleteTask(taskElement);
+      },
+      { once: true }
+    );
+
     return taskElement;
   }
 
@@ -174,7 +230,56 @@ const DOM_DISPLAY = (() => {
     return projectElement;
   }
 
+  const markAsDone = (taskElement) => {
+    console.log('done');
+  };
+
+  const editTask = (taskElement) => {
+    console.log('edited');
+  };
+
+  const deleteTask = (taskElement) => {
+    launchForm(FORMS.deleteForm, (formElement) => {
+      let project = DOM_DISPLAY.getCurrentProject();
+      let projectIndex = USER.getProjects().indexOf(project);
+
+      let taskArr = [..._tasksWrapper.children];
+      let taskIndex = taskArr.indexOf(taskElement);
+
+      project.removeTaskAtIndex(taskIndex);
+
+      //Update display
+      USER.updateData();
+      DOM_DISPLAY.displayProjects();
+      DOM_DISPLAY.selectProject(projectIndex);
+    });
+  };
+
   return { getCurrentProject, displayProjects, selectProject };
+})();
+
+(() => {
+  let addTaskBtn = document.querySelector('#list-add-btn');
+
+  addTaskBtn.addEventListener('click', (e) => {
+    launchForm(FORMS.addForm, (formElement) => {
+      let newTask = new Task(
+        formElement.querySelector('#desc').value,
+        formElement.querySelector('#priority').value,
+        formElement.querySelector('#date').value
+      );
+
+      let project = DOM_DISPLAY.getCurrentProject();
+      let projectIndex = USER.getProjects().indexOf(project);
+
+      project.addTask(newTask);
+
+      //Update display
+      USER.updateData();
+      DOM_DISPLAY.displayProjects();
+      DOM_DISPLAY.selectProject(projectIndex);
+    });
+  });
 })();
 
 export { DOM_DISPLAY };
