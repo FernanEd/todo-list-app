@@ -184,19 +184,21 @@ const DOM_DISPLAY = (() => {
         filteredTasks = tasks.filter((task) => !task.isDone());
         break;
       case 1:
-        filteredTasks = [...tasks].sort((a, b) => {
-          //Get their diferences from today to the due date
-          let aDiff = differenceInMinutes(
-            parse(a.getObjLiteral().duedate, 'yyyy-MM-dd', new Date()),
-            new Date()
-          );
-          let bDiff = differenceInMinutes(
-            parse(b.getObjLiteral().duedate, 'yyyy-MM-dd', new Date()),
-            new Date()
-          );
+        filteredTasks = [...tasks]
+          .sort((a, b) => {
+            //Get their diferences from today to the due date
+            let aDiff = differenceInMinutes(
+              parse(a.getObjLiteral().duedate, 'yyyy-MM-dd', new Date()),
+              new Date()
+            );
+            let bDiff = differenceInMinutes(
+              parse(b.getObjLiteral().duedate, 'yyyy-MM-dd', new Date()),
+              new Date()
+            );
 
-          return aDiff > bDiff ? 1 : -1;
-        });
+            return aDiff > bDiff ? 1 : -1;
+          })
+          .filter((task) => !task.isDone());
         break;
       case 2:
         filteredTasks = [...tasks]
