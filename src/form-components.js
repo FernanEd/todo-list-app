@@ -41,7 +41,7 @@ function factoryFormElement({ title, fields, button }) {
 
     if (field.required) fieldInput.setAttribute('required', '');
 
-    if (field.type === 'number') {
+    if (field.type === 'number' || field.type === 'date') {
       fieldInput.setAttribute('min', field.minrange);
       fieldInput.setAttribute('max', field.maxrange);
     }

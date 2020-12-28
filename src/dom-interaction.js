@@ -8,6 +8,8 @@ import {
 
 import { factoryFormElement as Form, launchForm } from './form-components.js';
 
+import { format, compareAsc } from 'date-fns';
+
 const FORMS = {
   addProjectForm: {
     title: 'New Project',
@@ -52,6 +54,8 @@ const FORMS = {
         name: 'Due date',
         type: 'date',
         required: true,
+        minrange: format(new Date(), 'yyyy-MM-dd'),
+        maxrange: '',
       },
       {
         id: 'priority',
@@ -182,9 +186,11 @@ const DOM_DISPLAY = (() => {
       case 1:
         break;
       case 2:
-        filteredTasks = [...tasks].sort((a, b) =>
-          a.getObjLiteral().priority < b.getObjLiteral().priority ? 1 : -1
-        );
+        filteredTasks = [...tasks]
+          .sort((a, b) =>
+            a.getObjLiteral().priority < b.getObjLiteral().priority ? 1 : -1
+          )
+          .filter((task) => !task.isDone());
         break;
       case 3:
         filteredTasks = tasks.filter((task) => task.isDone());
@@ -201,9 +207,10 @@ const DOM_DISPLAY = (() => {
     });
   };
 
-  function factoryProjectElement({ name, tasks }) {
+  function factoryProjectElement({ id, name, tasks }) {
     let projectElement = document.createElement('div');
     projectElement.classList.add('project-item');
+    projectElement.setAttribute('data-id', id);
 
     let content = document.createElement('div');
     content.classList.add('project-item-content');
@@ -280,11 +287,8 @@ const DOM_DISPLAY = (() => {
 
   const editProject = (projectElement) => {
     launchForm(FORMS.editProjectForm, (formElement) => {
-      //Locate index of which project i'm editing
-      let projectArr = [..._projectWrapper.children];
-      let projectIndex = projectArr.indexOf(projectElement);
-
-      //With that index, get the actual project obj and edit it
+      let projectID = projectElement.getAttribute('data-id');
+      let projectIndex = USER.getProjectIndexFromProjectID(projectID);
       let project = USER.getProjects()[projectIndex];
       project.editProject(formElement.querySelector('#name').value);
 
@@ -296,20 +300,20 @@ const DOM_DISPLAY = (() => {
 
   const deleteProject = (projectElement) => {
     launchForm(FORMS.deleteProjectForm, (formElement) => {
-      //Get relative index to it's position in the list
-      let projectArr = [..._projectWrapper.children];
-      let projectIndex = projectArr.indexOf(projectElement);
+      let projectID = projectElement.getAttribute('data-id');
+      let projectIndex = USER.getProjectIndexFromProjectID(projectID);
       USER.removeProjectAtIndex(projectIndex);
 
+      //Update display
       USER.updateData();
       DOM_DISPLAY.selectProject(-1);
     });
   };
 
-  function factoryTaskElement({ index, desc, priority, duedate, done }) {
+  function factoryTaskElement({ id, desc, priority, duedate, done }) {
     let taskElement = document.createElement('div');
     taskElement.classList.add('list-item');
-    taskElement.setAttribute('data-index', index);
+    taskElement.setAttribute('data-id', id);
     taskElement.setAttribute('data-done', done);
 
     if (done) {
@@ -325,7 +329,7 @@ const DOM_DISPLAY = (() => {
 
     let duedateElement = document.createElement('p');
     duedateElement.classList.add('list-item-duedate', 'text-secondary');
-    duedateElement.innerText = duedate;
+    duedateElement.innerText = `Due date: ${duedate}`;
 
     let priorityElement = document.createElement('p');
     priorityElement.classList.add('list-item-priority', 'text-primary');
@@ -396,9 +400,9 @@ const DOM_DISPLAY = (() => {
   }
 
   const markAsDone = (taskElement) => {
-    let taskIndex = taskElement.getAttribute('data-index');
-
+    let taskID = taskElement.getAttribute('data-id');
     let project = DOM_DISPLAY.getCurrentProject();
+    let taskIndex = project.getTaskIndexFromTaskID(taskID);
     let currentTask = project.getTasks()[taskIndex];
 
     if (!currentTask.isDone()) currentTask.setDone(true);
@@ -411,9 +415,9 @@ const DOM_DISPLAY = (() => {
 
   const editTask = (taskElement) => {
     launchForm(FORMS.editTaskForm, (formElement) => {
-      let taskIndex = taskElement.getAttribute('data-index');
-
+      let taskID = taskElement.getAttribute('data-id');
       let project = DOM_DISPLAY.getCurrentProject();
+      let taskIndex = project.getTaskIndexFromTaskID(taskID);
       let currentTask = project.getTasks()[taskIndex];
 
       currentTask.editTask(
@@ -430,8 +434,10 @@ const DOM_DISPLAY = (() => {
 
   const deleteTask = (taskElement) => {
     launchForm(FORMS.deleteTaskForm, (formElement) => {
-      let taskIndex = taskElement.getAttribute('data-index');
+      let taskID = taskElement.getAttribute('data-id');
       let project = DOM_DISPLAY.getCurrentProject();
+      let taskIndex = project.getTaskIndexFromTaskID(taskID);
+
       project.removeTaskAtIndex(taskIndex);
 
       //Update display

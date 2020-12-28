@@ -1,3 +1,12 @@
+let lastID = Number(localStorage.getItem('last_id')) || 0;
+
+function assignID() {
+  let currentID = lastID;
+  lastID++;
+  localStorage.setItem('last_id', currentID);
+  return currentID;
+}
+
 const USER_MODULE = (() => {
   const USER_DATA = rebuildData() || [];
 
@@ -26,7 +35,8 @@ const USER_MODULE = (() => {
         project.addTask(task);
       }
 
-      //Add the full project obj
+      //Add the full project obj AND asign it an ID
+      project.setID(assignID());
       newData.push(project);
     }
 
@@ -42,25 +52,29 @@ const USER_MODULE = (() => {
   };
 
   const addProject = (project) => {
+    //Set ID on push
+    project.setID(assignID());
     USER_DATA.push(project);
-    //Update
-    updateData();
   };
 
   const removeProject = (project) => {
     USER_DATA.splice(indexOf(project), 1);
-    //Update
-    updateData();
   };
 
   const removeProjectAtIndex = (index) => {
     USER_DATA.splice(index, 1);
-    //Update
-    updateData();
   };
 
   const getProjects = () => {
     return [...USER_DATA];
+  };
+
+  const getProjectIndexFromProjectID = (id) => {
+    //Check in the task array for the one the id matches
+    let projectsIDArr = USER_DATA.map((project) => project.getObjLiteral().id);
+
+    //Return index
+    return projectsIDArr.indexOf(Number(id));
   };
 
   return {
@@ -69,15 +83,18 @@ const USER_MODULE = (() => {
     removeProject,
     removeProjectAtIndex,
     getProjects,
+    getProjectIndexFromProjectID,
   };
 })();
 
 function factoryProject(name) {
+  let projectID = -1;
   let projectName = name;
   let tasks = [];
 
   const getObjLiteral = () => {
     return {
+      id: projectID,
       name: projectName,
       tasks: tasks.map((task) => task.getObjLiteral()),
     };
@@ -88,7 +105,7 @@ function factoryProject(name) {
   };
 
   const addTask = (task) => {
-    task.setIndex(tasks.length);
+    task.setID(assignID());
     tasks.push(task);
   };
 
@@ -108,6 +125,18 @@ function factoryProject(name) {
     projectName = newName;
   };
 
+  const getTaskIndexFromTaskID = (id) => {
+    //Check in the task array for the one the id matches
+    let tasksIDArr = tasks.map((task) => task.getObjLiteral().id);
+
+    //Return index
+    return tasksIDArr.indexOf(Number(id));
+  };
+
+  const setID = (ID) => {
+    projectID = ID;
+  };
+
   return {
     getObjLiteral,
     getName,
@@ -116,11 +145,13 @@ function factoryProject(name) {
     removeTaskAtIndex,
     getTasks,
     editProject,
+    getTaskIndexFromTaskID,
+    setID,
   };
 }
 
 function factoryTask(desc, priority, duedate, done = false) {
-  let taskIndex = -1;
+  let taskID = -1;
   let taskDesc = desc;
   let taskPriority = priority;
   let taskDueDate = duedate;
@@ -128,7 +159,7 @@ function factoryTask(desc, priority, duedate, done = false) {
 
   const getObjLiteral = () => {
     return {
-      index: taskIndex,
+      id: taskID,
       desc: taskDesc,
       priority: taskPriority,
       duedate: taskDueDate,
@@ -150,11 +181,11 @@ function factoryTask(desc, priority, duedate, done = false) {
     taskDueDate = newDueDate;
   };
 
-  const setIndex = (index) => {
-    taskIndex = index;
+  const setID = (ID) => {
+    taskID = ID;
   };
 
-  return { getObjLiteral, isDone, setDone, editTask, setIndex };
+  return { getObjLiteral, isDone, setDone, editTask, setID };
 }
 
 export { USER_MODULE, factoryProject, factoryTask };
