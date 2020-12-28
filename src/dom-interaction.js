@@ -8,7 +8,7 @@ import {
 
 import { factoryFormElement as Form, launchForm } from './form-components.js';
 
-import { format, compareAsc } from 'date-fns';
+import { format, compareAsc, parse, differenceInMinutes } from 'date-fns';
 
 const FORMS = {
   addProjectForm: {
@@ -55,7 +55,7 @@ const FORMS = {
         type: 'date',
         required: true,
         minrange: format(new Date(), 'yyyy-MM-dd'),
-        maxrange: '',
+        maxrange: '9999-12-31',
       },
       {
         id: 'priority',
@@ -184,6 +184,19 @@ const DOM_DISPLAY = (() => {
         filteredTasks = tasks.filter((task) => !task.isDone());
         break;
       case 1:
+        filteredTasks = [...tasks].sort((a, b) => {
+          //Get their diferences from today to the due date
+          let aDiff = differenceInMinutes(
+            parse(a.getObjLiteral().duedate, 'yyyy-MM-dd', new Date()),
+            new Date()
+          );
+          let bDiff = differenceInMinutes(
+            parse(b.getObjLiteral().duedate, 'yyyy-MM-dd', new Date()),
+            new Date()
+          );
+
+          return aDiff > bDiff ? 1 : -1;
+        });
         break;
       case 2:
         filteredTasks = [...tasks]
