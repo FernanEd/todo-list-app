@@ -299,6 +299,21 @@ h6 {
   gap: 0.3em;
 }
 
+.list-item-done .list-item-desc {
+  border-left: 2px solid var(--secondary);
+}
+
+.list-item-done .btn-primary {
+  background: var(--primary);
+  color: var(--light);
+
+  transition: filter 0.4s ease;
+}
+
+.list-item-done .btn-primary:hover {
+  filter: brightness(1.2);
+}
+
 .text-success {
   color: var(--success);
 }
