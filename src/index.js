@@ -65,4 +65,4 @@ document.addEventListener('click', (e) => {
 });
 */
 
-console.log(USER.getProjects()[0].getObjLiteral());
+//console.log(USER.getProjects()[0].getObjLiteral());
