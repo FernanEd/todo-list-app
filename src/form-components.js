@@ -1,6 +1,6 @@
 import { ICON } from './icons.js';
 
-function factoryFormElement({ title, fields, button }) {
+function factoryFormElement({ title, fields, button }, { fieldsValues }) {
   let newForm = document.createElement('form');
   newForm.classList.add('modal-form');
 
@@ -19,6 +19,8 @@ function factoryFormElement({ title, fields, button }) {
   formHeader.append(formTitle);
 
   newForm.append(formHeader);
+
+  let relativeIndx = 0;
 
   for (let field of fields) {
     let newField = document.createElement('div');
@@ -50,6 +52,12 @@ function factoryFormElement({ title, fields, button }) {
     newField.append(fieldInput);
 
     newForm.append(newField);
+
+    //Ad values if they exist
+
+    if (fieldsValues) fieldInput.value = fieldsValues[relativeIndx];
+
+    relativeIndx++;
   }
 
   let formSubmit = document.createElement('button');
@@ -61,8 +69,8 @@ function factoryFormElement({ title, fields, button }) {
   return newForm;
 }
 
-function launchForm(formObj, submitHandler) {
-  let formElement = new factoryFormElement(formObj);
+function launchForm(formObj, submitHandler, formValuesObj = {}) {
+  let formElement = new factoryFormElement(formObj, formValuesObj);
   let bg = document.createElement('div');
   bg.classList.add('modal-bg');
   bg.append(formElement);

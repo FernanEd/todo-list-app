@@ -55,7 +55,7 @@ const FORMS = {
         type: 'date',
         required: true,
         minrange: format(new Date(), 'yyyy-MM-dd'),
-        maxrange: '9999-12-31',
+        maxrange: '2100-12-31',
       },
       {
         id: 'priority',
@@ -83,6 +83,8 @@ const FORMS = {
         name: 'Due date',
         type: 'date',
         required: true,
+        minrange: format(new Date(), 'yyyy-MM-dd'),
+        maxrange: '2100-12-31',
       },
       {
         id: 'priority',
@@ -284,7 +286,7 @@ const DOM_DISPLAY = (() => {
     });
 
     editBtn.addEventListener('click', (e) => {
-      editProject(projectElement);
+      editProject(projectElement, name);
     });
 
     deleteBtn.addEventListener('click', (e) => {
@@ -300,17 +302,21 @@ const DOM_DISPLAY = (() => {
     selectProject(projectIndex);
   };
 
-  const editProject = (projectElement) => {
-    launchForm(FORMS.editProjectForm, (formElement) => {
-      let projectID = projectElement.getAttribute('data-id');
-      let projectIndex = USER.getProjectIndexFromProjectID(projectID);
-      let project = USER.getProjects()[projectIndex];
-      project.editProject(formElement.querySelector('#name').value);
+  const editProject = (projectElement, ...fields) => {
+    launchForm(
+      FORMS.editProjectForm,
+      (formElement) => {
+        let projectID = projectElement.getAttribute('data-id');
+        let projectIndex = USER.getProjectIndexFromProjectID(projectID);
+        let project = USER.getProjects()[projectIndex];
+        project.editProject(formElement.querySelector('#name').value);
 
-      //Update display
-      USER.updateData();
-      DOM_DISPLAY.selectProject(projectIndex);
-    });
+        //Update display
+        USER.updateData();
+        DOM_DISPLAY.selectProject(projectIndex);
+      },
+      { fieldsValues: [...fields] }
+    );
   };
 
   const deleteProject = (projectElement) => {
@@ -321,6 +327,7 @@ const DOM_DISPLAY = (() => {
 
       //Update display
       USER.updateData();
+
       DOM_DISPLAY.selectProject(-1);
     });
   };
@@ -405,7 +412,8 @@ const DOM_DISPLAY = (() => {
       { once: true }
     );
     editBtn.addEventListener('click', (e) => {
-      editTask(taskElement);
+      //Beware, order of these properties matter, bugs may arise if you move something!
+      editTask(taskElement, desc, duedate, priority);
     });
     deleteBtn.addEventListener('click', (e) => {
       deleteTask(taskElement);
@@ -428,23 +436,27 @@ const DOM_DISPLAY = (() => {
     DOM_DISPLAY.updateDisplay();
   };
 
-  const editTask = (taskElement) => {
-    launchForm(FORMS.editTaskForm, (formElement) => {
-      let taskID = taskElement.getAttribute('data-id');
-      let project = DOM_DISPLAY.getCurrentProject();
-      let taskIndex = project.getTaskIndexFromTaskID(taskID);
-      let currentTask = project.getTasks()[taskIndex];
+  const editTask = (taskElement, ...fields) => {
+    launchForm(
+      FORMS.editTaskForm,
+      (formElement) => {
+        let taskID = taskElement.getAttribute('data-id');
+        let project = DOM_DISPLAY.getCurrentProject();
+        let taskIndex = project.getTaskIndexFromTaskID(taskID);
+        let currentTask = project.getTasks()[taskIndex];
 
-      currentTask.editTask(
-        formElement.querySelector('#desc').value,
-        formElement.querySelector('#priority').value,
-        formElement.querySelector('#date').value
-      );
+        currentTask.editTask(
+          formElement.querySelector('#desc').value,
+          formElement.querySelector('#priority').value,
+          formElement.querySelector('#date').value
+        );
 
-      //Update display
-      USER.updateData();
-      DOM_DISPLAY.updateDisplay();
-    });
+        //Update display
+        USER.updateData();
+        DOM_DISPLAY.updateDisplay();
+      },
+      { fieldsValues: [...fields] }
+    );
   };
 
   const deleteTask = (taskElement) => {
