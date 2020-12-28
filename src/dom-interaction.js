@@ -106,7 +106,7 @@ const DOM_DISPLAY = (() => {
   let currentProject = undefined;
   const _mobileProjectTitle = document.querySelector('#project-mini-title');
 
-  let currentFilter = 0; // 0 - All | 1 - Close due dates | 2 - Top Priority |  3 - Done
+  let currentFilter = 0; // 0 - Pending tasks | 1 - Close due dates | 2 - Top Priority |  3 - Done
 
   // For mobiles
   _mobileProjectTitle.innerText = getCurrentProject().getName();
@@ -171,24 +171,28 @@ const DOM_DISPLAY = (() => {
     //Wipe anything before the function call
     _tasksWrapper.innerHTML = '';
 
-    if (tasks.length === 0) {
-      _tasksWrapper.innerText = 'No tasks to show.';
-    }
-
     let filteredTasks = tasks;
 
     //Apply filter
     switch (currentFilter) {
+      default:
+      case 0:
+        filteredTasks = tasks.filter((task) => !task.isDone());
+        break;
       case 1:
         break;
       case 2:
         filteredTasks = [...tasks].sort((a, b) =>
-          a.getObjLiteral().priority > b.getObjLiteral().priority ? 1 : -1
+          a.getObjLiteral().priority < b.getObjLiteral().priority ? 1 : -1
         );
         break;
       case 3:
         filteredTasks = tasks.filter((task) => task.isDone());
         break;
+    }
+
+    if (filteredTasks.length === 0) {
+      _tasksWrapper.innerText = 'No tasks to show.';
     }
 
     filteredTasks.forEach((task) => {
@@ -302,9 +306,15 @@ const DOM_DISPLAY = (() => {
     });
   };
 
-  function factoryTaskElement({ desc, priority, duedate, done }) {
+  function factoryTaskElement({ index, desc, priority, duedate, done }) {
     let taskElement = document.createElement('div');
     taskElement.classList.add('list-item');
+    taskElement.setAttribute('data-index', index);
+    taskElement.setAttribute('data-done', done);
+
+    if (done) {
+      taskElement.classList.add('list-item-done');
+    }
 
     // HEADER
     let headerElement = document.createElement('div');
@@ -386,16 +396,24 @@ const DOM_DISPLAY = (() => {
   }
 
   const markAsDone = (taskElement) => {
-    console.log('done');
+    let taskIndex = taskElement.getAttribute('data-index');
+
+    let project = DOM_DISPLAY.getCurrentProject();
+    let currentTask = project.getTasks()[taskIndex];
+
+    if (!currentTask.isDone()) currentTask.setDone(true);
+    else currentTask.setDone(false);
+
+    //Update display
+    USER.updateData();
+    DOM_DISPLAY.updateDisplay();
   };
 
   const editTask = (taskElement) => {
     launchForm(FORMS.editTaskForm, (formElement) => {
+      let taskIndex = taskElement.getAttribute('data-index');
+
       let project = DOM_DISPLAY.getCurrentProject();
-
-      let taskArr = [..._tasksWrapper.children];
-      let taskIndex = taskArr.indexOf(taskElement);
-
       let currentTask = project.getTasks()[taskIndex];
 
       currentTask.editTask(
@@ -412,12 +430,8 @@ const DOM_DISPLAY = (() => {
 
   const deleteTask = (taskElement) => {
     launchForm(FORMS.deleteTaskForm, (formElement) => {
+      let taskIndex = taskElement.getAttribute('data-index');
       let project = DOM_DISPLAY.getCurrentProject();
-
-      //Get relative index to it's position in the list
-      let taskArr = [..._tasksWrapper.children];
-      let taskIndex = taskArr.indexOf(taskElement);
-
       project.removeTaskAtIndex(taskIndex);
 
       //Update display

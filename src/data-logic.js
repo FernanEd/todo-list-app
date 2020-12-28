@@ -88,6 +88,7 @@ function factoryProject(name) {
   };
 
   const addTask = (task) => {
+    task.setIndex(tasks.length);
     tasks.push(task);
   };
 
@@ -119,6 +120,7 @@ function factoryProject(name) {
 }
 
 function factoryTask(desc, priority, duedate, done = false) {
+  let taskIndex = -1;
   let taskDesc = desc;
   let taskPriority = priority;
   let taskDueDate = duedate;
@@ -126,6 +128,7 @@ function factoryTask(desc, priority, duedate, done = false) {
 
   const getObjLiteral = () => {
     return {
+      index: taskIndex,
       desc: taskDesc,
       priority: taskPriority,
       duedate: taskDueDate,
@@ -137,8 +140,8 @@ function factoryTask(desc, priority, duedate, done = false) {
     return taskIsDone;
   };
 
-  const markAsDone = () => {
-    taskIsDone = true;
+  const setDone = (bool) => {
+    taskIsDone = bool;
   };
 
   const editTask = (newDesc, newPriority, newDueDate) => {
@@ -147,7 +150,11 @@ function factoryTask(desc, priority, duedate, done = false) {
     taskDueDate = newDueDate;
   };
 
-  return { getObjLiteral, isDone, markAsDone, editTask };
+  const setIndex = (index) => {
+    taskIndex = index;
+  };
+
+  return { getObjLiteral, isDone, setDone, editTask, setIndex };
 }
 
 export { USER_MODULE, factoryProject, factoryTask };
